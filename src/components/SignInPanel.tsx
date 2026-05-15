@@ -8,8 +8,8 @@ type Provider = "google" | "github" | "azure";
 
 const providers: { id: Provider; label: string; scopes?: string }[] = [
   { id: "google", label: "Continue with Google" },
-  { id: "github", label: "Continue with GitHub" },
   { id: "azure",  label: "Continue with Microsoft", scopes: "email" },
+  { id: "github", label: "Continue with GitHub" },
 ];
 
 export function SignInPanel() {
