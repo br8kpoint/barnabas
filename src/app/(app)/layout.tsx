@@ -11,20 +11,19 @@ export default async function AppShell({ children }: { children: React.ReactNode
   if (!user) redirect("/login");
 
   return (
-    <div className="relative min-h-screen">
-      {/* Banner backdrop: sits behind the nav and the page heading */}
-      <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-72 overflow-hidden sm:h-80">
+    <div className="relative isolate min-h-screen">
+      {/* Banner backdrop: fixed full-viewport, whole painting visible (no crop).
+          Content scrolls on top; the parchment overlay keeps text readable. */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <Image
           src="/banner.jpg"
           alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-contain object-top"
         />
-        <div className="absolute inset-0 bg-parchment/65" />
-        {/* Soft fade to parchment so the body content begins cleanly */}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-parchment" />
+        <div className="absolute inset-0 bg-parchment/55" />
       </div>
 
       <header className="border-b border-ink/10 bg-parchment/60 backdrop-blur-sm">

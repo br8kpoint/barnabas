@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function LandingPage() {
   return (
-    <main className="relative min-h-screen">
+    <main className="relative isolate min-h-screen">
       <div aria-hidden className="absolute inset-0 -z-10">
         <Image
           src="/banner.jpg"
@@ -11,13 +11,16 @@ export default function LandingPage() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-contain object-top sm:object-cover sm:object-center"
         />
-        <div className="absolute inset-0 bg-parchment/70" />
+        <div className="absolute inset-0 bg-parchment/40 sm:bg-parchment/30" />
       </div>
 
-      <div className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 py-12">
-        <div className="rounded-lg bg-parchment/80 p-8 backdrop-blur-sm shadow-sm">
+      {/* Mobile: card at the bottom, below the painting at top.
+          Desktop: card vertically centered, anchored to the right
+          so the window/wall area is covered, not the figures. */}
+      <div className="flex min-h-screen flex-col justify-end p-6 sm:items-end sm:justify-center sm:p-12 lg:pr-24">
+        <div className="w-full max-w-md rounded-lg bg-parchment/85 p-8 shadow-sm backdrop-blur-sm">
           <h1 className="text-4xl font-semibold tracking-tight">Barnabas</h1>
           <p className="mt-2 text-lg text-ink/70">Bible Reading Encouragement System</p>
 

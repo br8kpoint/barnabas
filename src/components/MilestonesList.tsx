@@ -16,7 +16,7 @@ export function MilestonesList({ milestones }: { milestones: Milestone[] }) {
     .slice(0, 5);
 
   return (
-    <section>
+    <section className="rounded-lg bg-parchment/65 px-5 py-4 backdrop-blur-sm">
       <h2 className="mb-3 text-sm uppercase tracking-wider text-ink/50">Recent milestones</h2>
       <ul className="space-y-1.5 text-sm">
         {recent.map((m) => (

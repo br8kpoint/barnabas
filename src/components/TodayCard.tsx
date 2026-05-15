@@ -53,7 +53,7 @@ export function TodayCard({
 
   return (
     <section
-      className={`rounded-lg border bg-white p-5 ${
+      className={`rounded-lg border bg-parchment/65 p-5 backdrop-blur-sm ${
         isNext ? "border-accent shadow-sm" : "border-ink/10"
       }`}
     >

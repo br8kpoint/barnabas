@@ -54,7 +54,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <header>
+      <header className="inline-block rounded-lg bg-parchment/65 px-5 py-4 backdrop-blur-sm">
         <p className="text-sm uppercase tracking-wider text-ink/50">Hello,</p>
         <h1 className="text-3xl font-semibold">{profile.display_name ?? "friend"}</h1>
         <p className="mt-1 text-ink/70">
