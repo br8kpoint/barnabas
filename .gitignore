@@ -8,3 +8,7 @@ out/
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/
