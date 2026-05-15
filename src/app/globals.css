@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  background: theme('colors.parchment');
+  color: theme('colors.ink');
+  font-family: theme('fontFamily.serif');
+}

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.youtube.com)",
+      "Bash(curl -sL \"https://www.youtube.com/feeds/videos.xml?playlist_id=PLfNVqWlknkohmH-Jszcwtanlr703lxoR5\")",
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(node --env-file=.env.local --import tsx --eval ' *)"
+    ]
+  }
+}
