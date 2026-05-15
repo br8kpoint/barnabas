@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { computeCatchup, streak, PLAN_LENGTH } from "@/lib/schedule";
 import { getReadings } from "@/lib/readings";
@@ -55,17 +54,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="relative -mx-6 h-32 overflow-hidden border-b border-ink/10 sm:h-40">
-        <Image
-          src="/banner.jpg"
-          alt=""
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, 768px"
-          className="object-cover object-center"
-        />
-      </div>
-
       <header>
         <p className="text-sm uppercase tracking-wider text-ink/50">Hello,</p>
         <h1 className="text-3xl font-semibold">{profile.display_name ?? "friend"}</h1>

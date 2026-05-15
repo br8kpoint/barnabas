@@ -7,7 +7,9 @@
       "Bash(npm install *)",
       "Bash(npx tsc *)",
       "Bash(npx next *)",
-      "Bash(node --env-file=.env.local --import tsx --eval ' *)"
+      "Bash(node --env-file=.env.local --import tsx --eval ' *)",
+      "Bash(git commit -m ' *)",
+      "Bash(gh repo *)"
     ]
   }
 }
