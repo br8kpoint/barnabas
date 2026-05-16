@@ -152,6 +152,34 @@ export async function updateProfile(input: {
   if (error) throw error;
 }
 
+export async function completeOnboarding(input: {
+  start_date?: string;
+  reminder_hour?: number | null;
+  reminder_email_optin?: boolean;
+}) {
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
+  const update: Record<string, unknown> = {
+    onboarded_at: new Date().toISOString(),
+  };
+  if (input.start_date && /^\d{4}-\d{2}-\d{2}$/.test(input.start_date)) {
+    update.start_date = input.start_date;
+  }
+  if (input.reminder_hour === null) {
+    update.reminder_hour = null;
+  } else if (
+    typeof input.reminder_hour === "number" &&
+    input.reminder_hour >= 0 &&
+    input.reminder_hour <= 23
+  ) {
+    update.reminder_hour = input.reminder_hour;
+  }
+  if (typeof input.reminder_email_optin === "boolean") {
+    update.reminder_email_optin = input.reminder_email_optin;
+  }
+  await supabase.from("user_profiles").update(update).eq("user_id", user.id);
+}
+
 export async function updateDetectedTimezone(detected: string) {
   try {
     new Intl.DateTimeFormat("en-US", { timeZone: detected });

@@ -1,11 +1,12 @@
 import { requireUser } from "@/lib/auth-helpers";
 import { getAdminSupabase } from "@/lib/supabase/admin";
-import { computeCatchup, streak, PLAN_LENGTH } from "@/lib/schedule";
+import { computeCatchup, streak, todayInTimezone, PLAN_LENGTH } from "@/lib/schedule";
 import { getReadings } from "@/lib/readings";
 import { detectMilestones } from "@/lib/milestones";
 import { CatchupBanner } from "@/components/CatchupBanner";
 import { TodayCard } from "@/components/TodayCard";
 import { MilestonesList } from "@/components/MilestonesList";
+import { OnboardingDialog } from "@/components/OnboardingDialog";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export default async function DashboardPage() {
   const [profileRes, progressRes] = await Promise.all([
     supabase
       .from("user_profiles")
-      .select("display_name, timezone, start_date, grace_days_used, grace_days_budget")
+      .select("display_name, timezone, start_date, grace_days_used, grace_days_budget, onboarded_at")
       .eq("user_id", user.id)
       .single(),
     supabase.from("progress").select("day").eq("user_id", user.id),
@@ -53,6 +54,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      {!profile.onboarded_at && (
+        <OnboardingDialog today={todayInTimezone(profile.timezone)} />
+      )}
       <header className="inline-block rounded-lg bg-parchment/65 px-5 py-4 backdrop-blur-sm">
         <p className="text-sm uppercase tracking-wider text-ink/50">Hello,</p>
         <h1 className="text-3xl font-semibold">{profile.display_name ?? "friend"}</h1>
