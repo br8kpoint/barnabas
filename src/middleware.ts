@@ -1,47 +1,25 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 
-export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({ request });
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: (
-          cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>,
-        ) => {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options),
-          );
-        },
-      },
-    },
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const path = request.nextUrl.pathname;
+export default auth((req) => {
+  const path = req.nextUrl.pathname;
   const isPublic =
     path === "/" ||
     path.startsWith("/login") ||
+    path.startsWith("/privacy") ||
+    path.startsWith("/terms") ||
     path.startsWith("/auth") ||
+    path.startsWith("/api/auth") ||
     path.startsWith("/api/cron");
 
-  if (!user && !isPublic) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!req.auth && !isPublic) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
-  if (user && (path === "/" || path === "/login")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (req.auth && (path === "/" || path === "/login")) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
-  return response;
-}
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],

@@ -2,18 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { getBrowserSupabase } from "@/lib/supabase/client";
+import { signIn } from "next-auth/react";
 
-type Provider = "google" | "github" | "azure";
+type Provider = "google" | "microsoft-entra-id" | "github";
 
-const providers: { id: Provider; label: string; scopes?: string }[] = [
+const providers: { id: Provider; label: string }[] = [
   { id: "google", label: "Continue with Google" },
-  { id: "azure",  label: "Continue with Microsoft", scopes: "email" },
+  { id: "microsoft-entra-id", label: "Continue with Microsoft" },
   { id: "github", label: "Continue with GitHub" },
 ];
 
 export function SignInPanel() {
-  const supabase = getBrowserSupabase();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -22,32 +21,25 @@ export function SignInPanel() {
   const [status, setStatus] = useState<"idle" | "sending" | "verifying" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
-  const redirectTo =
-    (process.env.NEXT_PUBLIC_APP_URL ||
-      (typeof window !== "undefined" ? window.location.origin : "")) +
-    "/auth/callback";
-
-  async function signInWithOAuth(provider: Provider, scopes?: string) {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo, scopes },
-    });
-  }
-
   async function sendCode(e: React.FormEvent) {
     e.preventDefault();
     setStatus("sending");
     setError(null);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: redirectTo },
-    });
-    if (error) {
-      setStatus("error");
-      setError(error.message);
-    } else {
+    try {
+      const res = await fetch("/api/auth/email/send", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? "Could not send code");
+      }
       setStep("code");
       setStatus("idle");
+    } catch (err) {
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Could not send code");
     }
   }
 
@@ -55,18 +47,17 @@ export function SignInPanel() {
     e.preventDefault();
     setStatus("verifying");
     setError(null);
-    const { error } = await supabase.auth.verifyOtp({
+    const result = await signIn("email-otp", {
       email,
-      token: code.trim(),
-      type: "email",
+      code: code.trim(),
+      redirect: false,
     });
-    if (error) {
-      setStatus("error");
-      setError(error.message);
-    } else {
-      // Session is now set in cookies; navigate to the dashboard.
+    if (result?.ok) {
       router.replace("/dashboard");
       router.refresh();
+    } else {
+      setStatus("error");
+      setError("Invalid or expired code. Try again or request a new one.");
     }
   }
 
@@ -82,7 +73,7 @@ export function SignInPanel() {
       {providers.map((p) => (
         <button
           key={p.id}
-          onClick={() => signInWithOAuth(p.id, p.scopes)}
+          onClick={() => signIn(p.id, { callbackUrl: "/dashboard" })}
           className="w-full rounded-md border border-ink/15 bg-white px-4 py-2.5 text-left hover:border-accent"
         >
           {p.label}
@@ -117,8 +108,7 @@ export function SignInPanel() {
       ) : (
         <form onSubmit={verifyCode} className="space-y-3">
           <p className="text-sm text-ink/70">
-            Check <strong>{email}</strong>. Open the message and either click
-            the link or copy the 6-digit code below.
+            Check <strong>{email}</strong>. Enter the 6-digit code we sent.
           </p>
           <input
             type="text"

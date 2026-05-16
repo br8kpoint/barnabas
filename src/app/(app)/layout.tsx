@@ -1,14 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getServerSupabase } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { requireUser } from "@/lib/auth-helpers";
 
 export const dynamic = "force-dynamic";
 
 export default async function AppShell({ children }: { children: React.ReactNode }) {
-  const supabase = await getServerSupabase();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  await requireUser();
 
   return (
     <div className="relative isolate min-h-screen">

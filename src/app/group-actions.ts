@@ -1,16 +1,8 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import { getServerSupabase } from "@/lib/supabase/server";
+import { requireUser } from "@/lib/auth-helpers";
+import { getAdminSupabase } from "@/lib/supabase/admin";
 
-async function requireUser() {
-  const supabase = await getServerSupabase();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  return { supabase, user };
-}
-
-// Human-friendly invite code: 8 chars, no ambiguous glyphs.
 function generateInviteCode(): string {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let out = "";
@@ -22,9 +14,9 @@ function generateInviteCode(): string {
 
 export async function createGroup(name: string): Promise<string> {
   if (!name || name.length > 80) throw new Error("Name must be 1-80 chars");
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
 
-  // Try a few invite codes on the off chance of collision.
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = generateInviteCode();
     const { data, error } = await supabase
@@ -33,21 +25,20 @@ export async function createGroup(name: string): Promise<string> {
       .select("id")
       .single();
     if (!error && data) {
-      // Auto-join creator.
       const { error: joinErr } = await supabase
         .from("group_members")
         .insert({ group_id: data.id, user_id: user.id });
       if (joinErr) throw joinErr;
       return data.id;
     }
-    // Retry only on unique-violation (23505); rethrow anything else.
     if (error && (error as { code?: string }).code !== "23505") throw error;
   }
   throw new Error("Could not generate a unique invite code; please retry");
 }
 
 export async function joinGroup(code: string): Promise<string> {
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
   const normalized = code.toUpperCase().replace(/\s+/g, "");
 
   const { data: group, error } = await supabase
@@ -60,13 +51,17 @@ export async function joinGroup(code: string): Promise<string> {
 
   const { error: joinErr } = await supabase
     .from("group_members")
-    .upsert({ group_id: group.id, user_id: user.id }, { onConflict: "group_id,user_id" });
+    .upsert(
+      { group_id: group.id, user_id: user.id },
+      { onConflict: "group_id,user_id" },
+    );
   if (joinErr) throw joinErr;
   return group.id;
 }
 
 export async function leaveGroup(groupId: string) {
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
   const { error } = await supabase
     .from("group_members")
     .delete()

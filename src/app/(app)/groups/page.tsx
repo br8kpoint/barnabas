@@ -1,5 +1,5 @@
-import { getServerSupabase } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { requireUser } from "@/lib/auth-helpers";
+import { getAdminSupabase } from "@/lib/supabase/admin";
 import Link from "next/link";
 import { GroupsForms } from "@/components/GroupsForms";
 
@@ -7,11 +7,9 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function GroupsPage() {
-  const supabase = await getServerSupabase();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
 
-  // RLS already filters: we can only see groups we belong to.
   const { data: memberships } = await supabase
     .from("group_members")
     .select("group_id, groups(id, name, invite_code)")
