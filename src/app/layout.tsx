@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Barnabas — Bible Reading Encouragement",
-  description: "Stay on track with the one-year chronological Bible reading plan.",
+  title: "Barnabas — Bible Read / Watch Encouragement",
+  description: "Stay on track with the one-year chronological Bible read / watch plan.",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [

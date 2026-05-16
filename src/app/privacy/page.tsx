@@ -16,7 +16,7 @@ export default function PrivacyPage() {
 
       <p className="mt-8">
         Barnabas is a personal, non-commercial project built to help people stay
-        on track with a daily Bible reading plan. This page describes what
+        on track with a daily Bible read / watch plan. This page describes what
         information the app stores about you, why, and who else can see it.
       </p>
 
@@ -31,7 +31,7 @@ export default function PrivacyPage() {
           signed in with Google, Microsoft, or GitHub.
         </li>
         <li>
-          Your reading progress — a list of which plan days you have marked
+          Your read / watch progress — a list of which plan days you have marked
           complete.
         </li>
         <li>
@@ -44,8 +44,8 @@ export default function PrivacyPage() {
           addresses or timezones).
         </li>
         <li>
-          A web push subscription endpoint, if you enabled push notifications
-          from your browser. You can revoke this at any time from your
+          An app push subscription endpoint, if you enabled app push notifications
+          from this device. You can revoke this at any time from your
           browser&rsquo;s notification settings.
         </li>
       </ul>
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
       <ul className="mt-3 list-disc space-y-1.5 pl-6">
         <li>Passwords. Sign-in is handled entirely by your OAuth provider or by a one-time email code.</li>
         <li>Payment information. The app is free and there is no payment.</li>
-        <li>Reading content or reflections of any kind. The plan is a list of passages; Barnabas does not capture journaling.</li>
+        <li>Notes, reflections, or journaling of any kind. The plan is a list of passages and companion videos; Barnabas does not capture writing.</li>
         <li>Analytics tied to your identity. We do not run ad trackers or behavior profiling.</li>
       </ul>
 
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
       </p>
       <ul className="mt-3 list-disc space-y-1.5 pl-6">
         <li>
-          <strong>Supabase</strong> — stores your account and reading progress;
+          <strong>Supabase</strong> — stores your account and read / watch progress;
           handles authentication. Located in the United States.
         </li>
         <li>

@@ -35,7 +35,7 @@ export function OnboardingDialog({ today }: { today: string }) {
       <div className="w-full max-w-md rounded-lg bg-parchment p-6 shadow-xl">
         <h2 className="text-2xl font-semibold tracking-tight">Welcome to Barnabas</h2>
         <p className="mt-2 text-ink/70">
-          Two quick settings and you&rsquo;re reading.
+          Two quick settings and you&rsquo;re reading / watching.
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-5">
@@ -50,7 +50,7 @@ export function OnboardingDialog({ today }: { today: string }) {
             />
             <p className="mt-1 text-xs text-ink/60">
               When does Day 1 land? Today is the default; pick a past date if
-              you&rsquo;ve been reading already.
+              you&rsquo;ve been reading / watching already.
             </p>
           </div>
 
@@ -64,7 +64,7 @@ export function OnboardingDialog({ today }: { today: string }) {
               />
               <span className="text-sm font-medium">
                 Email me a daily nudge if I haven&rsquo;t finished
-                today&rsquo;s reading
+                today&rsquo;s read / watch
               </span>
             </label>
 
@@ -89,7 +89,7 @@ export function OnboardingDialog({ today }: { today: string }) {
                   <option value={21}>9 PM</option>
                 </select>
                 <p className="mt-1 text-xs text-ink/60">
-                  Browser push notifications can be enabled later in Settings.
+                  App push notifications can be enabled later in Settings.
                 </p>
               </div>
             )}

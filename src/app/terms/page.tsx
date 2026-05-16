@@ -16,8 +16,8 @@ export default function TermsPage() {
 
       <p className="mt-8">
         Barnabas is a free, non-commercial tool for following a daily Bible
-        reading plan. By using it, you agree to the following terms. They are
-        deliberately short.
+        read / watch plan. By using it, you agree to the following terms. They
+        are deliberately short.
       </p>
 
       <h2 className="mt-10 text-xl font-semibold">The app is provided as-is</h2>
@@ -25,8 +25,8 @@ export default function TermsPage() {
         Barnabas is a personal project, offered without charge and without
         warranty of any kind. We try to keep it running and accurate, but we
         cannot promise that the service will be uninterrupted, that the data
-        will never be lost, or that the reading plan will always sync correctly
-        with the source video series. If a perfectly reliable Bible-reading
+        will never be lost, or that the read / watch plan will always sync correctly
+        with the source video series. If a perfectly reliable Bible read / watch
         tracker is important to you, please keep your own backup record.
       </p>
 
@@ -58,11 +58,10 @@ export default function TermsPage() {
 
       <h2 className="mt-10 text-xl font-semibold">Content</h2>
       <p className="mt-3">
-        The daily readings reference passages of the Bible — public-domain or
-        licensed texts depending on which translation you read elsewhere. The
-        accompanying daily videos are produced by the YouTube channel
-        AJaytheCEO and embedded from YouTube; we do not host that content. Use
-        of those videos is subject to YouTube&rsquo;s terms.
+        The daily plan references Bible passages and the companion YouTube
+        videos that walk through them. The videos are produced by the YouTube
+        channel AJaytheCEO and embedded from YouTube; we do not host that
+        content. Use of those videos is subject to YouTube&rsquo;s terms.
       </p>
       <p className="mt-3">
         Any content you create inside Barnabas — group names, invite codes,
@@ -85,7 +84,7 @@ export default function TermsPage() {
         To the maximum extent permitted by law, Barnabas and its operator are
         not liable for any indirect, incidental, or consequential damages
         arising from your use of the service, including lost progress, missed
-        readings, or interruptions in service.
+        days, or interruptions in service.
       </p>
 
       <h2 className="mt-10 text-xl font-semibold">Changes to these terms</h2>

@@ -104,7 +104,7 @@ export function SettingsForm({ initial, email }: { initial: Profile; email: stri
             checked={form.reminder_email_optin}
             onChange={(e) => update("reminder_email_optin", e.target.checked)}
           />
-          <span>Email me a nudge if I haven&rsquo;t finished today&rsquo;s reading.</span>
+          <span>Email me a nudge if I haven&rsquo;t finished today&rsquo;s read / watch.</span>
         </label>
 
         <div className="rounded-md bg-ink/5 px-4 py-3 text-sm">
@@ -195,8 +195,8 @@ function TakeBreakForm({
         <h2 className="font-semibold">Take a break</h2>
         <p className="mt-1 text-sm text-ink/60">
           Reminders are currently paused until <strong>{currentPausedUntil}</strong>.
-          When you come back and start reading, grace days will refund as you
-          catch up.
+          When you come back and start reading / watching, grace days will refund
+          as you catch up.
         </p>
         <button
           type="button"

@@ -20,7 +20,7 @@ export function CatchupBanner({
   if (state.onTrack) {
     return (
       <div className="rounded-md bg-ontrack/10 px-4 py-3 text-ontrack">
-        <strong>On track.</strong> Today&rsquo;s reading is Day {state.scheduledDay}.
+        <strong>On track.</strong> Today&rsquo;s read / watch is Day {state.scheduledDay}.
       </div>
     );
   }
@@ -50,7 +50,7 @@ export function CatchupBanner({
           Use {state.behindBy} grace day{state.behindBy === 1 ? "" : "s"}
         </button>
         <span className="text-sm text-ink/60 self-center">
-          or read {state.behindBy} more to catch up
+          or read / watch {state.behindBy} more to catch up
         </span>
       </div>
     </div>

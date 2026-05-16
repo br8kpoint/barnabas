@@ -123,8 +123,8 @@ export async function sendDueReminders(): Promise<{
       const subject = `Day ${reading.day} — ${reading.passage}`;
       const body =
         state.behindBy > 0
-          ? `${state.behindBy} reading${state.behindBy === 1 ? "" : "s"} behind. No shame — pick up Day ${reading.day}.`
-          : `Today's reading: Day ${reading.day}, ${reading.passage}.`;
+          ? `${state.behindBy} day${state.behindBy === 1 ? "" : "s"} behind. No shame — pick up Day ${reading.day}.`
+          : `Today's read / watch: Day ${reading.day}, ${reading.passage}.`;
 
       // Push (in parallel-ish via the per-user helper that fans out).
       if (p.reminder_push_optin) {
@@ -295,7 +295,7 @@ function reminderHtml(args: {
   const youtubeUrl = `https://www.youtube.com/watch?v=${args.videoId}`;
   const behindLine =
     args.behindBy > 0
-      ? `<p>You&rsquo;re ${args.behindBy} reading${args.behindBy === 1 ? "" : "s"} behind — no shame, just a nudge.</p>`
+      ? `<p>You&rsquo;re ${args.behindBy} day${args.behindBy === 1 ? "" : "s"} behind — no shame, just a nudge.</p>`
       : "";
   return `
     <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;padding:24px;">

@@ -98,7 +98,7 @@ export function PushSetup() {
       await savePushSubscription(json, navigator.userAgent);
       setEndpoint(json.endpoint);
       setStatus("subscribed");
-      setMessage("Push notifications enabled on this device.");
+      setMessage("App push notifications enabled on this device.");
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }
@@ -117,7 +117,7 @@ export function PushSetup() {
       }
       setEndpoint(null);
       setStatus("not-subscribed");
-      setMessage("Push notifications disabled on this device.");
+      setMessage("App push notifications disabled on this device.");
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }
@@ -138,9 +138,9 @@ export function PushSetup() {
 
   return (
     <section className="rounded-lg border border-ink/10 bg-white p-5">
-      <h2 className="font-semibold">Push notifications</h2>
+      <h2 className="font-semibold">App push notifications</h2>
       <p className="mt-1 text-sm text-ink/60">
-        Get the daily nudge as a browser notification instead of (or in addition to) email.
+        Get the daily nudge as an app notification instead of (or in addition to) email.
         Each device you sign in on can be enabled separately.
       </p>
 
@@ -149,14 +149,14 @@ export function PushSetup() {
 
         {status === "unsupported" && (
           <p className="text-sm text-behind">
-            This browser doesn&rsquo;t support web push notifications.
+            This browser doesn&rsquo;t support app push notifications.
           </p>
         )}
 
         {status === "needs-install" && (
           <div className="space-y-2 text-sm">
             <p className="text-ink/80">
-              On iOS, push notifications require Barnabas to be added to your Home Screen first.
+              On iOS, app push notifications require Barnabas to be added to your Home Screen first.
             </p>
             <ol className="ml-4 list-decimal space-y-1 text-ink/70">
               <li>Tap the Share button in Safari</li>
@@ -169,7 +169,7 @@ export function PushSetup() {
 
         {status === "permission-denied" && (
           <p className="text-sm text-behind">
-            Notifications are blocked by your browser. Re-enable them in your site settings,
+            App notifications are blocked. Re-enable them in your site settings,
             then refresh this page.
           </p>
         )}
@@ -179,13 +179,13 @@ export function PushSetup() {
             onClick={subscribe}
             className="rounded-md bg-accent px-4 py-2 text-parchment"
           >
-            Enable push on this device
+            Enable app push on this device
           </button>
         )}
 
         {status === "subscribed" && (
           <div className="space-y-3">
-            <p className="text-sm text-ontrack">Push is enabled on this device.</p>
+            <p className="text-sm text-ontrack">App push is enabled on this device.</p>
             {endpoint && (
               <p className="break-all text-xs text-ink/40">{endpoint.slice(0, 80)}…</p>
             )}

@@ -22,7 +22,7 @@ export default function LandingPage() {
       <div className="flex min-h-screen flex-col justify-end p-6 sm:items-end sm:justify-center sm:p-12 lg:pr-24">
         <div className="w-full max-w-md rounded-lg bg-parchment/85 p-8 shadow-sm backdrop-blur-sm">
           <h1 className="text-4xl font-semibold tracking-tight">Barnabas</h1>
-          <p className="mt-2 text-lg text-ink/70">Bible Reading Encouragement System</p>
+          <p className="mt-2 text-lg text-ink/70">Bible Read / Watch Encouragement System</p>
 
           <p className="mt-8 leading-relaxed">
             A companion for AJaytheCEO&rsquo;s <em>Read the Bible in One Year</em> plan.
