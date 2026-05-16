@@ -82,11 +82,8 @@ export function SettingsForm({ initial, email }: { initial: Profile; email: stri
           />
         </Field>
 
-        <Field label="Daily reminder hour (24h, leave blank to skip)">
-          <input
-            type="number"
-            min={0}
-            max={23}
+        <Field label="Daily reminder time">
+          <select
             className={INPUT_CLS}
             value={form.reminder_hour ?? ""}
             onChange={(e) =>
@@ -95,7 +92,14 @@ export function SettingsForm({ initial, email }: { initial: Profile; email: stri
                 e.target.value === "" ? null : Number(e.target.value),
               )
             }
-          />
+          >
+            <option value="">No reminders</option>
+            {Array.from({ length: 24 }, (_, h) => (
+              <option key={h} value={h}>
+                {formatHour12(h)}
+              </option>
+            ))}
+          </select>
         </Field>
 
         <label className="flex items-center gap-2">
@@ -326,4 +330,11 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       {children}
     </label>
   );
+}
+
+function formatHour12(h: number): string {
+  if (h === 0) return "12 AM (midnight)";
+  if (h === 12) return "12 PM (noon)";
+  if (h < 12) return `${h} AM`;
+  return `${h - 12} PM`;
 }
