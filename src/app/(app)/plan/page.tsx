@@ -1,13 +1,12 @@
-import { getServerSupabase } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { requireUser } from "@/lib/auth-helpers";
+import { getAdminSupabase } from "@/lib/supabase/admin";
 import { computeCatchup, PLAN_LENGTH } from "@/lib/schedule";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlanPage() {
-  const supabase = await getServerSupabase();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
 
   const [readingsRes, profileRes, progressRes] = await Promise.all([
     supabase

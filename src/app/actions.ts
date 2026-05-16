@@ -1,7 +1,8 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import { getServerSupabase } from "@/lib/supabase/server";
+import { requireUser } from "@/lib/auth-helpers";
+import { getAdminSupabase } from "@/lib/supabase/admin";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   daysBetween,
   todayInTimezone,
@@ -9,17 +10,8 @@ import {
   PLAN_LENGTH,
 } from "@/lib/schedule";
 
-async function requireUser() {
-  const supabase = await getServerSupabase();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  return { supabase, user };
-}
-
-// Pure helper that runs after any completion: refund grace if the user
-// is now ahead of the grace-adjusted schedule. Persists if grace changed.
 async function refundGraceIfApplicable(
-  supabase: Awaited<ReturnType<typeof getServerSupabase>>,
+  supabase: SupabaseClient,
   userId: string,
 ) {
   const [{ data: profile }, { data: progressRows }] = await Promise.all([
@@ -57,7 +49,8 @@ async function refundGraceIfApplicable(
 
 export async function markDayComplete(day: number) {
   if (!Number.isInteger(day) || day < 1 || day > 365) throw new Error("bad day");
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
   const { error } = await supabase
     .from("progress")
     .upsert({ user_id: user.id, day, completed_at: new Date().toISOString() });
@@ -67,7 +60,8 @@ export async function markDayComplete(day: number) {
 
 export async function unmarkDay(day: number) {
   if (!Number.isInteger(day) || day < 1 || day > 365) throw new Error("bad day");
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
   const { error } = await supabase
     .from("progress")
     .delete()
@@ -78,9 +72,9 @@ export async function unmarkDay(day: number) {
 
 export async function spendGraceDays(amount: number) {
   if (!Number.isInteger(amount) || amount <= 0) throw new Error("bad amount");
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
 
-  // Read current value, increment, write back. RLS guarantees user scope.
   const { data: profile, error: readErr } = await supabase
     .from("user_profiles")
     .select("grace_days_used, grace_days_budget")
@@ -98,14 +92,10 @@ export async function spendGraceDays(amount: number) {
   if (writeErr) throw writeErr;
 }
 
-// Pause notifications until a future date, spending grace days to cover the
-// gap so the user isn't shown as "behind" during the break. Returns the
-// number of grace days spent. Refund happens later via the normal
-// catch-up path when the user reads.
 export async function pauseUntil(date: string): Promise<{ graceSpent: number }> {
-  // date is YYYY-MM-DD in the user's tz.
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("Invalid date");
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
 
   const { data: profile } = await supabase
     .from("user_profiles")
@@ -136,10 +126,9 @@ export async function pauseUntil(date: string): Promise<{ graceSpent: number }> 
   return { graceSpent: gap };
 }
 
-// Cancel an active pause early. Does NOT refund grace days automatically —
-// the user can refund them by catching up via the normal completion flow.
 export async function cancelPause() {
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
   const { error } = await supabase
     .from("user_profiles")
     .update({ reminder_paused_until: null })
@@ -154,7 +143,8 @@ export async function updateProfile(input: {
   reminder_hour?: number | null;
   reminder_email_optin?: boolean;
 }) {
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
   const { error } = await supabase
     .from("user_profiles")
     .update(input)
@@ -162,15 +152,12 @@ export async function updateProfile(input: {
   if (error) throw error;
 }
 
-// Bulk-mark days 1..throughDay as complete for the current user. Used when
-// someone has been watching the playlist on YouTube directly and wants to
-// import their progress without clicking every day. Idempotent: re-running
-// with the same value is a no-op for days already done.
 export async function markCaughtUpThrough(throughDay: number): Promise<{ added: number }> {
   if (!Number.isInteger(throughDay) || throughDay < 1 || throughDay > 365) {
     throw new Error("Day must be between 1 and 365");
   }
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
 
   const { data: existing } = await supabase
     .from("progress")

@@ -1,14 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import { getServerSupabase } from "@/lib/supabase/server";
-
-async function requireUser() {
-  const supabase = await getServerSupabase();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  return { supabase, user };
-}
+import { requireUser } from "@/lib/auth-helpers";
+import { getAdminSupabase } from "@/lib/supabase/admin";
 
 type SubscriptionJSON = {
   endpoint: string;
@@ -19,7 +12,8 @@ export async function savePushSubscription(
   sub: SubscriptionJSON,
   userAgent: string,
 ) {
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
   if (!sub?.endpoint || !sub.keys?.p256dh || !sub.keys?.auth) {
     throw new Error("Invalid subscription payload");
   }
@@ -37,7 +31,8 @@ export async function savePushSubscription(
 }
 
 export async function deletePushSubscription(endpoint: string) {
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
   const { error } = await supabase
     .from("push_subscriptions")
     .delete()
@@ -47,10 +42,8 @@ export async function deletePushSubscription(endpoint: string) {
 }
 
 export async function sendTestPush() {
-  // Fire-and-forget: send a test push to the calling user's subscriptions.
-  // Implementation lives in src/lib/push.ts; we import lazily to keep the
-  // bundle thin and avoid loading web-push in the client.
-  const { supabase, user } = await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
   const { data: subs } = await supabase
     .from("push_subscriptions")
     .select("endpoint, p256dh, auth")

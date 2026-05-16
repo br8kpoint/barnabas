@@ -1,14 +1,23 @@
-import { getServerSupabase } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
+import { requireUser } from "@/lib/auth-helpers";
+import { getAdminSupabase } from "@/lib/supabase/admin";
+import { notFound } from "next/navigation";
 import { computeCatchup, PLAN_LENGTH } from "@/lib/schedule";
 
 export const dynamic = "force-dynamic";
 
 export default async function GroupPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await getServerSupabase();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
+
+  // Membership gate: only members of this group may see its roster and progress.
+  const { data: membership } = await supabase
+    .from("group_members")
+    .select("user_id")
+    .eq("group_id", id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!membership) notFound();
 
   const { data: group, error } = await supabase
     .from("groups")
@@ -18,14 +27,12 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
   if (error) throw error;
   if (!group) notFound();
 
-  // 1. Member list (RLS lets us see this only because we're a member).
   const { data: memberRows } = await supabase
     .from("group_members")
     .select("user_id, joined_at")
     .eq("group_id", id);
   const memberIds = (memberRows ?? []).map((m) => m.user_id as string);
 
-  // 2. Summaries for each member (RLS lets us see groupmates' progress).
   const { data: summaryRows } = memberIds.length
     ? await supabase
         .from("user_progress_summary")

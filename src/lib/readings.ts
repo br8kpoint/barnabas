@@ -1,5 +1,5 @@
 // Server-side helpers for the readings table.
-import { getServerSupabase } from "./supabase/server";
+import { getAdminSupabase } from "./supabase/admin";
 
 export type Reading = {
   day: number;
@@ -11,7 +11,7 @@ export type Reading = {
 
 export async function getReadings(days: number[]): Promise<Reading[]> {
   if (!days.length) return [];
-  const supabase = await getServerSupabase();
+  const supabase = getAdminSupabase();
   const { data, error } = await supabase
     .from("readings")
     .select("day, passage, video_id, video_title, video_published_at")

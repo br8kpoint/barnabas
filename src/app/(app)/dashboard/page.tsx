@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
-import { getServerSupabase } from "@/lib/supabase/server";
+import { requireUser } from "@/lib/auth-helpers";
+import { getAdminSupabase } from "@/lib/supabase/admin";
 import { computeCatchup, streak, PLAN_LENGTH } from "@/lib/schedule";
 import { getReadings } from "@/lib/readings";
 import { detectMilestones } from "@/lib/milestones";
@@ -10,9 +10,8 @@ import { MilestonesList } from "@/components/MilestonesList";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const supabase = await getServerSupabase();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
 
   const [profileRes, progressRes] = await Promise.all([
     supabase
