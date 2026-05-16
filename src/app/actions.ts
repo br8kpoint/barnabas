@@ -152,6 +152,21 @@ export async function updateProfile(input: {
   if (error) throw error;
 }
 
+export async function updateDetectedTimezone(detected: string) {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: detected });
+  } catch {
+    return;
+  }
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
+  await supabase
+    .from("user_profiles")
+    .update({ timezone: detected })
+    .eq("user_id", user.id)
+    .neq("timezone", detected);
+}
+
 export async function markCaughtUpThrough(throughDay: number): Promise<{ added: number }> {
   if (!Number.isInteger(throughDay) || throughDay < 1 || throughDay > 365) {
     throw new Error("Day must be between 1 and 365");

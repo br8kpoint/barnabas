@@ -1,14 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
 import { requireUser } from "@/lib/auth-helpers";
+import { getAdminSupabase } from "@/lib/supabase/admin";
+import { TimezoneSync } from "@/components/TimezoneSync";
 
 export const dynamic = "force-dynamic";
 
 export default async function AppShell({ children }: { children: React.ReactNode }) {
-  await requireUser();
+  const user = await requireUser();
+  const supabase = getAdminSupabase();
+  const { data: profile } = await supabase
+    .from("user_profiles")
+    .select("timezone")
+    .eq("user_id", user.id)
+    .maybeSingle();
 
   return (
     <div className="relative isolate min-h-screen">
+      {profile?.timezone && <TimezoneSync currentTimezone={profile.timezone} />}
       {/* Banner backdrop: fixed full-viewport, whole painting visible (no crop).
           Content scrolls on top; the parchment overlay keeps text readable. */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
