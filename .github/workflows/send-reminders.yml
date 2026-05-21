@@ -1,0 +1,19 @@
+name: Send reminders
+
+# Vercel's Hobby plan caps cron jobs at once per day, but the reminder logic
+# needs at least hourly runs to match each user's reminder_hour. This pings
+# the Vercel cron endpoint every 15 minutes instead.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger send-reminders
+        run: |
+          curl -fsS --max-time 60 -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            https://barnabasbible.app/api/cron/send-reminders
