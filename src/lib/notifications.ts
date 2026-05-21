@@ -92,7 +92,11 @@ export async function sendDueReminders(): Promise<{
         graceDaysUsed: p.grace_days_used,
         completedDays,
       });
-      if (state.finished || state.onTrack) {
+      // Skip only if there's nothing due: the plan is finished, or they've
+      // completed through the day the plan currently expects. (state.onTrack
+      // is too loose here — it stays true when today's reading isn't done
+      // yet, which would suppress the daily nudge entirely.)
+      if (state.finished || state.lastCompletedDay >= state.effectiveDay) {
         skipped++;
         continue;
       }
